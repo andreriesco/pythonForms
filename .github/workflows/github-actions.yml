@@ -41,8 +41,8 @@ jobs:
           echo "APPID=$APPID" >> $GITHUB_ENV
       - name: Build Application
         run: |
-          docker run --rm -t -v ${PWD}:/workspaces/${{ github.event.repository.name }} --env-file ./appconfig_0/containerEnv \
-          pythonforms_arm32v7-debian-python3-qt_bullseye_release_828798e2-2fc6-4df1-9901-5b527a364603 bash -c "cd /workspaces/${{ github.event.repository.name }} && python3 ./.helpers/_build_ui_files.py ."
+          sudo apt-get install -y python3.8 python3.8-distutils pip && python3.8 -m pip install pyside2
+          python3.8 ./.helpers/_build_ui_files.py .
       - name: Run application
         run: |
           mkdir -p appconfig_0/work && cp requirements.txt setup.sh cleanup.sh appconfig_0/work
