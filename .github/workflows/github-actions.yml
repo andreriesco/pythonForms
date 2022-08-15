@@ -45,4 +45,6 @@ jobs:
           pythonforms_arm32v7-debian-python3-qt_bullseye_release_828798e2-2fc6-4df1-9901-5b527a364603 bash -c "cd /workspaces/${{ github.event.repository.name }} && python3 ./.helpers/_build_ui_files.py ."
       - name: Run application
         run: |
+          mkdir -p appconfig_0/work && cp requirements.txt setup.sh cleanup.sh appconfig_0/work
+          mkdir -p appconfig_0/work/${{ github.event.repository.name }} && rsync -r --copy-unsafe-links -p -g -o -t -q --delete --exclude-from=.rsync-exclude-list . appconfig_0/work/${{ github.event.repository.name }}/
           ./moses-linux/tdskt -p application ${{ env.APPID }} build release
