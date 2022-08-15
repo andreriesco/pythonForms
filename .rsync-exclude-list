@@ -1,0 +1,4 @@
+appconfig_*
+.vscode
+.helpers
+__pycache__

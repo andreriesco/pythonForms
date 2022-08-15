@@ -1,0 +1,20 @@
+label: Qt for Python using forms UI
+detail: >-
+  $(multiple-windows) Creates an application that uses the Qt for Python runtime
+  and supports a form-based User Interface defined using .ui files
+tags:
+  - qt
+testing:
+  - title: Python 3 Qt
+    createCmd: torizon.createPythonApp
+    projName: PythonUIApp
+    platformDistroCodeName: bullseye
+    baseContainer:
+      arm32v7: debian-python3-qt_bullseye
+      arm64v8: debian-python3-qt-vivante_bullseye
+    mainSourceFile: main.py
+    mainSourceFileBreakPoint: 33
+    programOutput: Hello World
+    hasSDKContainer: false
+    stopOnEntry: false
+extversion: 1.6.0

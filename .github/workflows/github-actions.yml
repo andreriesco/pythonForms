@@ -1,0 +1,48 @@
+name: Github actions
+'on':
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+jobs:
+  build:
+    timeout-minutes: 360
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: '${{ github.workspace }}'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Moses Up
+        run: |
+          echo "${{ github.workspace }}" >> $GITHUB_PATH
+          sudo apt-get update
+          sudo apt-get install libexpat1
+          wget -O moses-linux.zip https://docs1.toradex.com/111503-moses-linux.zip && unzip moses-linux.zip && mv ./moses/dist/moses-linux ./moses-linux && rm ./moses-linux.zip && rm -fr ./moses
+          cd moses-linux
+          sudo chmod +x moses
+          sudo chmod +x tdskt
+          sudo ./moses &
+          sleep 15
+      - name: EULA Accept
+        run: |
+          sudo ./moses-linux/tdskt platforms
+          sudo ./moses-linux/tdskt eula nxp-la-opt-v5 setprop accepted true
+          sudo ./moses-linux/tdskt platforms
+      - name: Enable Emulation
+        run: |
+          ./moses-linux/tdskt -p enableemulation
+      - name: Load Application
+        run: |
+          APPID=$(./moses-linux/tdskt load ./appconfig_0/)
+          echo "APPID=$APPID" >> $GITHUB_ENV
+      - name: Build Application
+        run: |
+          docker run --rm -t -v ${PWD}:/workspaces/${{ github.event.repository.name }} --env-file ./appconfig_0/containerEnv \
+          pythonforms_arm32v7-debian-python3-qt_bullseye_release_828798e2-2fc6-4df1-9901-5b527a364603 bash -c "cd /workspaces/${{ github.event.repository.name }} && python3 ./.helpers/_build_ui_files.py ."
+      - name: Run application
+        run: |
+          ./moses-linux/tdskt -p application ${{ env.APPID }} build release

@@ -1,0 +1,21 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "command": "${command:python.interpreterPath}",
+            "type": "process",
+            "args": [
+                "${workspaceFolder}/.helpers/_build_ui_files.py",
+                "${workspaceFolder}"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ],
+    "options": {
+        "env": {}
+    }
+}
